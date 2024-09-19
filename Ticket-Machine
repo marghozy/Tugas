@@ -1,1 +1,43 @@
+public class TicketMachine
+{
+    private int harga;
+    private int balance;
+    private int total;
 
+    public TicketMachine(int hargatiket)
+    {
+        harga = hargatiket;
+        balance = 0;
+        total = 0;
+    }
+
+    public int getHarga()
+    {
+        return harga;
+    }
+    
+    public int getBalance()
+    {
+        return balance;
+    }
+    
+    public void insertUang(int jumlah) {
+    if (jumlah > 0) {
+        balance = balance + jumlah;
+        } else {
+        System.out.println("Masukkan jumlah yang valid!");
+        }
+    }
+    
+    public void printTiket() {
+    if (balance >= harga) {
+        System.out.println("Mencetak tiket...");
+        System.out.println("Harga tiket: " + harga + " IDR");
+        total = total + harga;
+        balance = balance - harga;
+        } else {
+        System.out.println("Saldo tidak cukup. Masukkan " + (harga - balance) + " IDR lagi.");
+        }
+    }
+
+}
