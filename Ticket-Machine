@@ -31,8 +31,11 @@ public class TicketMachine
     
     public void printTiket() {
     if (balance >= harga) {
-        System.out.println("Mencetak tiket...");
-        System.out.println("Harga tiket: " + harga + " IDR");
+        System.out.println("##########################");
+        System.out.println("### Mencetak tiket GZy SHOW");
+        System.out.println("### Harga tiket: " + harga + " IDR");
+        System.out.println("### Sisa saldo: " + balance + " IDR");
+        System.out.println("##########################");
         total = total + harga;
         balance = balance - harga;
         } else {
