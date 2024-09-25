@@ -1,0 +1,22 @@
+public class Operasi {
+    public double tambah(double a, double b) {
+        return a + b;
+    }
+
+    public double kurang(double a, double b) {
+        return a - b;
+    }
+
+    public double kali(double a, double b) {
+        return a * b;
+    }
+
+    public double bagi(double a, double b) {
+        if (b != 0) {
+            return a / b;
+        } else {
+            System.out.println("Error: Tidak bisa membagi dengan nol!");
+            return Double.NaN;
+        }
+    }
+}
