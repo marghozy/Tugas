@@ -1,0 +1,39 @@
+import java.util.Scanner;
+
+public class KalkulatorSederhana {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        Operasi operasi = new Operasi();
+        
+        System.out.print("Masukkan angka pertama: ");
+        double angka1 = input.nextDouble();
+        
+        System.out.print("Pilih operator (+, -, *, /): ");
+        char operator = input.next().charAt(0);
+        
+        System.out.print("Masukkan angka kedua: ");
+        double angka2 = input.nextDouble();
+        
+        double hasil = 0;
+
+        switch(operator) {
+            case '+':
+                hasil = operasi.tambah(angka1, angka2);
+                break;
+            case '-':
+                hasil = operasi.kurang(angka1, angka2);
+                break;
+            case '*':
+                hasil = operasi.kali(angka1, angka2);
+                break;
+            case '/':
+                hasil = operasi.bagi(angka1, angka2);
+                break;
+            default:
+                System.out.println("Operator tidak valid!");
+                return;
+        }
+        
+        System.out.println("Hasil: " + hasil);
+    }
+}
