@@ -1,0 +1,70 @@
+import java.util.ArrayList;
+
+public class Auction {
+    private ArrayList<Lot> lots;
+    private int nextLotNumber;
+
+    public Auction() {
+        lots = new ArrayList<>();
+        nextLotNumber = 1;
+    }
+
+    public void enterLot(String description) {
+        lots.add(new Lot(nextLotNumber, description));
+        nextLotNumber++;
+    }
+
+    public Lot getLot(int lotNumber) {
+        for (Lot lot : lots) {
+            if (lot.getLotNumber() == lotNumber) {
+                return lot;
+            }
+        }
+        return null;
+    }
+
+    public boolean makeBid(int lotNumber, Person person, double amount) {
+        Lot selectedLot = getLot(lotNumber);
+        if (selectedLot != null) {
+            return selectedLot.bidFor(new Bid(person, amount));
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Auction auction = new Auction();
+
+        Person person1 = new Person("Ammar");
+        Person person2 = new Person("Ghozy");
+
+        auction.enterLot("Vintage Guitar");
+        auction.enterLot("Antique Clock");
+
+        if (auction.makeBid(1, person1, 500)) {
+            System.out.println(person1.getName() + " berhasil membuat bid sebesar 500 untuk Lot 1.");
+        } else {
+            System.out.println(person1.getName() + " gagal membuat bid untuk Lot 1.");
+        }
+
+        if (auction.makeBid(1, person2, 700)) {
+            System.out.println(person2.getName() + " berhasil membuat bid sebesar 700 untuk Lot 1.");
+        } else {
+            System.out.println(person2.getName() + " gagal membuat bid untuk Lot 1.");
+        }
+
+        if (auction.makeBid(1, person1, 600)) {
+            System.out.println(person1.getName() + " berhasil membuat bid sebesar 600 untuk Lot 1.");
+        } else {
+            System.out.println(person1.getName() + " gagal membuat bid untuk Lot 1.");
+        }
+
+        Lot lot1 = auction.getLot(1);
+        if (lot1 != null && lot1.getHighestBid() != null) {
+            System.out.println("Penawar tertinggi untuk Lot 1 adalah " +
+                    lot1.getHighestBid().getBidder().getName() + " dengan bid sebesar " +
+                    lot1.getHighestBid().getAmount());
+        } else {
+            System.out.println("Belum ada penawar untuk Lot 1.");
+        }
+    }
+}
