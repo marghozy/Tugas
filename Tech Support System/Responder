@@ -1,0 +1,19 @@
+import java.util.Random;
+
+public class Responder {
+    private String[] responses;
+    
+    public Responder() {
+        responses = new String[] {
+            "That sounds interesting. Tell me more...",
+            "Can you elaborate on that?",
+            "Hmm, I see. What else?",
+            "Interesting. Please continue..."
+        };
+    }
+    
+    public String generateResponse(String input) {
+        Random random = new Random();
+        return responses[random.nextInt(responses.length)];
+    }
+}
