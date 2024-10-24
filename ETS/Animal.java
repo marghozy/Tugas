@@ -8,7 +8,7 @@ class Hewan {
         this.umur = umur;
     }
 
-    public void makan() {
+    public void tidur() {
         System.out.println(nama + " sedang tidur.");
     }
 }
