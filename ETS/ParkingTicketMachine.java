@@ -38,7 +38,7 @@ public class ParkingTicketMachine {
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("Selamat datang di Mesin Tiket Parkir!");
-        System.out.print("Masukkan harga tiket parkir per jam (misalnya 5000): ");
+        System.out.print("Masukkan harga tiket parkir per jam: ");
         int ticketPrice = scanner.nextInt();
 
         ParkingTicketMachine machine = new ParkingTicketMachine(ticketPrice);
