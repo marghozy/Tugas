@@ -15,6 +15,5 @@ Filenya ada :
 
 Filenya ada :
 1. ParkingTicketMachine.java
-2. Main3.java
 
 # NO 4
