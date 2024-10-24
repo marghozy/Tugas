@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
 public class ParkingTicketMachine {
-    // Atribut
     private int balance;
     private int ticketPrice;
     private int ticketTime;
@@ -34,11 +33,12 @@ public class ParkingTicketMachine {
     public int getTimePurchased() {
         return ticketTime;
     }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("Selamat datang di Mesin Tiket Parkir!");
-        System.out.print("Masukkan harga tiket parkir per jam : ");
+        System.out.print("Masukkan harga tiket parkir per jam (misalnya 5000): ");
         int ticketPrice = scanner.nextInt();
 
         ParkingTicketMachine machine = new ParkingTicketMachine(ticketPrice);
