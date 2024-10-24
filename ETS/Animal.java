@@ -1,4 +1,3 @@
-// Kelas Induk
 class Hewan {
     String nama;
     int umur;
