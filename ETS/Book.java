@@ -1,12 +1,10 @@
 class Book {
-    // Atribut kelas
     String judul;
     String penulis;
     int tahunTerbit;
     String namaPenerbit;
     String kategoriBuku;
 
-    // Konstruktor untuk menginisialisasi atribut
     public Book(String judul, String penulis, int tahunTerbit, String namaPenerbit, String kategoriBuku) {
         this.judul = judul;
         this.penulis = penulis;
@@ -15,7 +13,6 @@ class Book {
         this.kategoriBuku = kategoriBuku;
     }
 
-    // Metode untuk mencetak detail buku
     public void printDetails() {
         System.out.println("Judul Buku: " + judul);
         System.out.println("Penulis: " + penulis);
