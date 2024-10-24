@@ -1,14 +1,25 @@
-class ParkingTicketMachine {
-    // Atribut
-    private int balance;         // Jumlah uang yang dimasukkan oleh pengguna
-    private int ticketPrice;     // Harga tiket parkir per jam
-    private int ticketTime;      // Jumlah waktu parkir yang dibeli (dalam jam)
+public class ParkingTicketMachine {
+    private int ticketPrice; // Harga tiket parkir per jam
+    private int balance;     // Jumlah uang yang dimasukkan oleh pengguna
+    private int total;       // Total uang yang terkumpul di mesin
+    private int ticketTime;  // Jumlah jam parkir yang dibeli
 
-    // Konstruktor untuk menginisialisasi harga tiket
+    // Konstruktor untuk menginisialisasi harga tiket per jam
     public ParkingTicketMachine(int ticketPrice) {
         this.ticketPrice = ticketPrice;
         this.balance = 0;
+        this.total = 0;
         this.ticketTime = 0;
+    }
+
+    // Metode untuk mendapatkan harga tiket per jam
+    public int getTicketPrice() {
+        return ticketPrice;
+    }
+
+    // Metode untuk mendapatkan saldo yang dimasukkan oleh pengguna
+    public int getBalance() {
+        return balance;
     }
 
     // Metode untuk menambahkan uang ke mesin
@@ -17,28 +28,28 @@ class ParkingTicketMachine {
             balance += amount;
             System.out.println("Uang berhasil ditambahkan: Rp" + amount);
         } else {
-            System.out.println("Uang yang dimasukkan tidak valid.");
+            System.out.println("Masukkan jumlah yang valid!");
         }
     }
 
-    // Metode untuk mengeluarkan tiket jika saldo cukup
+    // Metode untuk mengeluarkan tiket parkir jika saldo cukup
     public void issueTicket() {
         if (balance >= ticketPrice) {
             ticketTime = balance / ticketPrice;  // Hitung jumlah jam parkir yang dibeli
-            balance = balance % ticketPrice;     // Sisa uang setelah pembelian tiket
-            System.out.println("Tiket dikeluarkan untuk " + ticketTime + " jam parkir.");
+            total += ticketPrice * ticketTime;   // Tambahkan ke total uang yang terkumpul
+            balance = balance % ticketPrice;     // Sisa saldo setelah pembelian tiket
+            System.out.println("########################################");
+            System.out.println("####### Tiket Parkir Dikeluarkan #######");
+            System.out.println("### Waktu parkir: " + ticketTime + " jam");
+            System.out.println("########################################");
+            System.out.println("### Sisa saldo: Rp" + balance "#########");
         } else {
-            System.out.println("Saldo tidak cukup untuk membeli tiket.");
+            System.out.println("Saldo tidak cukup. Masukkan Rp" + (ticketPrice - balance) + " lagi.");
         }
     }
 
-    // Metode untuk mengembalikan jumlah jam parkir yang telah dibeli
+    // Metode untuk mendapatkan jumlah waktu parkir yang telah dibeli
     public int getTimePurchased() {
         return ticketTime;
-    }
-
-    // Metode untuk menampilkan saldo saat ini
-    public int getBalance() {
-        return balance;
     }
 }
