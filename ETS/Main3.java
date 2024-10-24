@@ -11,8 +11,5 @@ public class Main {
 
         // Menampilkan waktu parkir yang dibeli
         System.out.println("Waktu parkir yang dibeli: " + machine.getTimePurchased() + " jam.");
-
-        // Menampilkan saldo yang tersisa
-        System.out.println("Saldo tersisa: Rp" + machine.getBalance());
     }
 }
