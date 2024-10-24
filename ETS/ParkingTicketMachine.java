@@ -42,7 +42,7 @@ public class ParkingTicketMachine {
             System.out.println("####### Tiket Parkir Dikeluarkan #######");
             System.out.println("### Waktu parkir: " + ticketTime + " jam");
             System.out.println("########################################");
-            System.out.println("### Sisa saldo: Rp" + balance "#########");
+            System.out.println("### Sisa saldo: Rp" + balance);
         } else {
             System.out.println("Saldo tidak cukup. Masukkan Rp" + (ticketPrice - balance) + " lagi.");
         }
