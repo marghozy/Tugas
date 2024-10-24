@@ -1,9 +1,8 @@
-// Kelas Turunan
 class Kucing extends Hewan {
     String ras;
 
     public Kucing(String nama, int umur, String ras) {
-        super(nama, umur); // Memanggil konstruktor kelas induk
+        super(nama, umur);
         this.ras = ras;
     }
 
