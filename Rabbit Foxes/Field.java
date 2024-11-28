@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Field {
 
@@ -7,6 +8,14 @@ public class Field {
 
     public Field(int depth, int width) {
         field = new Object[depth][width];
+    }
+
+    public int getDepth() {
+        return field.length;
+    }
+
+    public int getWidth() {
+        return field[0].length;
     }
 
     public void clear(Location location) {
@@ -31,11 +40,27 @@ public class Field {
             }
         }
 
-        return free.isEmpty() ? null : free.get(0);
+        if (!free.isEmpty()) {
+            Collections.shuffle(free);
+            return free.get(0);
+        }
+        return null;
     }
 
     public List<Location> adjacentLocations(Location location) {
         List<Location> locations = new ArrayList<>();
+        int row = location.getRow();
+        int col = location.getCol();
+
+        for (int r = row - 1; r <= row + 1; r++) {
+            for (int c = col - 1; c <= col + 1; c++) {
+                if (r >= 0 && r < field.length && c >= 0 && c < field[0].length && (r != row || c != col)) {
+                    locations.add(new Location(r, c));
+                }
+            }
+        }
+
+        Collections.shuffle(locations);
         return locations;
     }
 }
