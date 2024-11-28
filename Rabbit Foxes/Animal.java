@@ -37,5 +37,9 @@ public abstract class Animal {
         field.place(this, newLocation);
     }
 
+    public Field getField() {
+        return field;
+    }
+
     public abstract void act(List<Animal> newAnimals);
 }
