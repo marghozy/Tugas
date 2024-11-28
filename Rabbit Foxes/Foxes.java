@@ -7,7 +7,7 @@ public class Foxes extends Animal {
     }
 
     @Override
-public void act(List<Animal> newAnimals) {
+    public void act(List<Animal> newAnimals) {
     if (isAlive()) {
         Location newLocation = findFood();
         if (newLocation == null) {
