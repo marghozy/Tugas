@@ -7,17 +7,19 @@ public class Foxes extends Animal {
     }
 
     @Override
-    public void act(List<Animal> newAnimals) {
-        if (isAlive()) {
-            Location newLocation = findFood();
-            if (newLocation == null) {
-                newLocation = getField().freeAdjacentLocation(getLocation());
-            }
+public void act(List<Animal> newAnimals) {
+    if (isAlive()) {
+        Location newLocation = findFood();
+        if (newLocation == null) {
+            newLocation = getField().freeAdjacentLocation(getLocation());
+        }
 
-            if (newLocation != null) {
-                setLocation(newLocation);
-            } else {
-                setDead();
+        if (newLocation != null) {
+            setLocation(newLocation);
+            System.out.println("Fox moved to: " + newLocation.getRow() + "," + newLocation.getCol());
+        } else {
+            setDead();
+            System.out.println("Fox died at: " + getLocation().getRow() + "," + getLocation().getCol());
             }
         }
     }
