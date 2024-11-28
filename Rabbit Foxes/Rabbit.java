@@ -7,7 +7,7 @@ public class Rabbit extends Animal {
     }
 
     @Override
-public void act(List<Animal> newAnimals) {
+    public void act(List<Animal> newAnimals) {
     if (isAlive()) {
         Location newLocation = getField().freeAdjacentLocation(getLocation());
         if (newLocation != null) {
