@@ -1,8 +1,9 @@
 public class Main {
     public static void main(String[] args) {
-
-        Human programmer = new Programmer("Alice");
-        Human doctor = new Doctor("Bob");
+        // **1. Contoh untuk Human (Manusia)**
+        // Menginisialisasi programmer dan doctor dengan tambahan parameter profession
+        Human programmer = new Human("Alice", "Programmer");
+        Human doctor = new Human("Bob", "Doctor");
 
         System.out.println("=== Human ===");
         programmer.breathe();
@@ -13,8 +14,10 @@ public class Main {
         doctor.grow();
         doctor.speak();
 
-        Animal dog = new Dog("Buddy");
-        Animal bird = new Bird("Tweety");
+        // **2. Contoh untuk Animal (Hewan)**
+        // Menginisialisasi objek Hewan dengan konstruktor yang sesuai (menambahkan type)
+        Animal dog = new Animal("Buddy", "Dog");
+        Animal bird = new Animal("Tweety", "Bird");
 
         System.out.println("\n=== Animal ===");
         dog.breathe();
@@ -25,8 +28,10 @@ public class Main {
         bird.grow();
         bird.move();
 
-        Plant floweringPlant = new FloweringPlant("Rose");
-        Plant nonFloweringPlant = new NonFloweringPlant("Fern");
+        // **3. Contoh untuk Plant (Tumbuhan)**
+        // Menginisialisasi objek Plant dengan konstruktor yang membutuhkan type (Flowering atau NonFlowering)
+        Plant floweringPlant = new Plant("Rose", "Flowering");
+        Plant nonFloweringPlant = new Plant("Fern", "NonFlowering");
 
         System.out.println("\n=== Plant ===");
         floweringPlant.breathe();
