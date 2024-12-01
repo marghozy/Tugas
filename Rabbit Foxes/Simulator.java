@@ -32,9 +32,9 @@ public class Simulator {
                     field.place(rabbit, location);
                 } else if (Math.random() < 0.05) {
                     Location location = new Location(row, col);
-                    Fox fox = new Fox(field, location);
-                    animals.add(fox);
-                    field.place(fox, location);
+                    Foxes foxes = new Foxes(field, location);
+                    animals.add(foxes);
+                    field.place(foxes, location);
                 }
             }
         }
