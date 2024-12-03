@@ -1,3 +1,5 @@
+# AUTHOR : https://github.com/Dapunta
+
 ## Prepare MySQL (Database)
 
 - You can use **MySQL Server** or **XAMPP**
