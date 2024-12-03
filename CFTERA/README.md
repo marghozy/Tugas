@@ -16,7 +16,7 @@
     }
     ```
 
-- Create relational database step by step with [database settings](/backend/database/README.md)
+- Create relational database step by step with [database settings](https://github.com/marghozy/Tugas/blob/main/CFTERA/backend/database/README.md)
 
 ## Prepare Backend (FastAPI)
 
