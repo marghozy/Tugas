@@ -3,13 +3,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.File;
 
-/**
- * ImageViewer is the main class of the image viewer application.
- * It builds and displays the application GUI and initializes all other components.
- * 
- * @author Michael
- * @version 1.01
- */
 public class ImageViewer {
     private static final String VERSION = "Version 1.01";
     private static JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
@@ -20,17 +13,11 @@ public class ImageViewer {
     private JLabel statusLabel;
     private OFImage currentImage;
 
-    /**
-     * Create an ImageViewer and show it on screen.
-     */
     public ImageViewer() {
         currentImage = null;
         makeFrame();
     }
 
-    /**
-     * Open a file chooser to select a new image file.
-     */
     private void openFile() {
         int returnVal = fileChooser.showOpenDialog(frame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -50,25 +37,16 @@ public class ImageViewer {
         }
     }
 
-    /**
-     * Close the current image.
-     */
     private void close() {
         currentImage = null;
         imagePanel.clearImage();
         showFilename(null);
     }
 
-    /**
-     * Quit the application.
-     */
     private void quit() {
         System.exit(0);
     }
 
-    /**
-     * Make the picture darker.
-     */
     private void makeDarker() {
         if (currentImage != null) {
             currentImage.darker();
@@ -79,9 +57,6 @@ public class ImageViewer {
         }
     }
 
-    /**
-     * Make the picture lighter.
-     */
     private void makeLighter() {
         if (currentImage != null) {
             currentImage.lighter();
@@ -92,9 +67,6 @@ public class ImageViewer {
         }
     }
 
-    /**
-     * Show "About" dialog.
-     */
     private void showAbout() {
         JOptionPane.showMessageDialog(frame,
                 "ImageViewer " + VERSION,
@@ -102,23 +74,14 @@ public class ImageViewer {
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /**
-     * Display a filename on the appropriate label.
-     */
     private void showFilename(String filename) {
         filenameLabel.setText(filename != null ? "File: " + filename : "No file selected");
     }
 
-    /**
-     * Display a status message in the status bar.
-     */
     private void showStatus(String text) {
         statusLabel.setText(text);
     }
 
-    /**
-     * Create the Swing frame and its content.
-     */
     private void makeFrame() {
         frame = new JFrame("Image Viewer");
         imagePanel = new ImagePanel();
@@ -134,18 +97,14 @@ public class ImageViewer {
         makeMenuBar(frame);
 
         frame.pack();
-        frame.setLocationRelativeTo(null); // Center on screen
+        frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
 
-    /**
-     * Create the menu bar.
-     */
     private void makeMenuBar(JFrame frame) {
         JMenuBar menuBar = new JMenuBar();
 
-        // File menu
         JMenu fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
 
@@ -163,7 +122,6 @@ public class ImageViewer {
         quitItem.addActionListener(e -> quit());
         fileMenu.add(quitItem);
 
-        // Filter menu
         JMenu filterMenu = new JMenu("Filter");
         menuBar.add(filterMenu);
 
@@ -175,7 +133,6 @@ public class ImageViewer {
         lighterItem.addActionListener(e -> makeLighter());
         filterMenu.add(lighterItem);
 
-        // Help menu
         JMenu helpMenu = new JMenu("Help");
         menuBar.add(helpMenu);
 
@@ -186,9 +143,6 @@ public class ImageViewer {
         frame.setJMenuBar(menuBar);
     }
 
-    /**
-     * Main method to launch the application.
-     */
     public static void main(String[] args) {
         new ImageViewer();
     }
