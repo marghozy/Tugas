@@ -50,7 +50,7 @@ CFTERA is a website-based ordering and cashier application that helps restaurant
     }
     ```
 
-- Create relational database step by step with [database settings](/backend/database/README.md)
+- Create relational database step by step with [database settings](https://github.com/marghozy/Tugas/blob/main/CFTERA/backend/database/README.md)
 
 ## B. Prepare Backend (FastAPI)
 
