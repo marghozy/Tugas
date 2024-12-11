@@ -98,3 +98,4 @@ CFTERA is a website-based ordering and cashier application that helps restaurant
 - Start Backend **FastAPI**
     - Run `main.py` in VSCode Terminal  
     - And URL will be served
+
