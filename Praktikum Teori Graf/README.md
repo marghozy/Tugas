@@ -1,5 +1,5 @@
-**Nama** : Ammar Ghozy Tanumijaya
-**NRP** : 5025231203
+- **Nama** : Ammar Ghozy Tanumijaya
+- **NRP** : 5025231203
 
 # 🐴 Knight's Tour & LMIS Project
 Repositori ini berisi tiga program praktikum Teori Graf:
