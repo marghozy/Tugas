@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLBB Deal or No Deal: Draft Challenge</title>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y08NYJ50R9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-Y08NYJ50R9");
+    </script>
+
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      @keyframes aurora {
+        0%, 100% { background-position: 50% 50%, 50% 50%; }
+        50% { background-position: 350% 50%, 350% 50%; }
+      }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #312e81 50%, #0f172a 100%);
+        min-height: 100vh;
+        color: #ffffff;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      .aurora-bg {
+        position: fixed; inset: 0;
+        background-image:
+          repeating-linear-gradient(100deg, rgba(56, 189, 248, 0.1) 0%, rgba(56, 189, 248, 0.1) 7%, transparent 10%, transparent 12%, rgba(56, 189, 248, 0.1) 16%),
+          repeating-linear-gradient(100deg, rgba(236, 72, 153, 0.15) 10%, rgba(255,255,255,0.05) 15%, rgba(236, 72, 153, 0.15) 20%, rgba(99, 102, 241, 0.1) 25%, rgba(236, 72, 153, 0.15) 30%);
+        background-size: 300%, 200%; background-position: 50% 50%, 50% 50%;
+        animation: aurora 40s linear infinite; opacity: 0.8; z-index: 0; pointer-events: none;
+      }
+
+      .container { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 20px; min-height: 100vh; }
+      
+      .header { display: flex; justify-content: space-between; align-items: center; padding: 20px; margin-bottom: 25px; backdrop-filter: blur(12px); background: rgba(255,255,255,0.05); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+      .title { font-size: 1.6em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
+      
+      .btn-reset { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: white; padding: 10px 20px; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s ease; border-radius: 10px; }
+      .btn-reset:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+
+      .round-indicator { text-align: center; margin-bottom: 20px; animation: popIn 0.5s ease; }
+      .round-badge { display: inline-block; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); padding: 8px 24px; border-radius: 50px; font-weight: 800; font-size: 1.2em; color: #e2e8f0; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(5px); }
+
+      .draft-progress { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
+      .draft-slot { flex: 1; min-width: 120px; max-width: 160px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; text-align: center; transition: all 0.3s; }
+      .draft-slot.active { border-color: #38bdf8; background: rgba(56, 189, 248, 0.15); box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); transform: scale(1.05); }
+      .draft-slot.filled { border-color: #10b981; background: rgba(16, 185, 129, 0.15); }
+      .slot-role { font-size: 0.75em; font-weight: 700; text-transform: uppercase; opacity: 0.7; margin-bottom: 4px; }
+      .slot-hero { font-size: 0.95em; font-weight: 700; color: #fff; }
+
+      .instruction { text-align: center; padding: 16px; margin-bottom: 25px; font-size: 1.1em; background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border-radius: 12px; font-weight: 600; }
+
+      .cases-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin: 0 auto; max-width: 1000px; padding-bottom: 30px; }
+      .case-card { background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(0,0,0,0.3)); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 20px 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 150px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); position: relative; }
+      .case-card:hover:not(.opened):not(.selected) { border-color: #fff; transform: translateY(-8px); box-shadow: 0 12px 30px rgba(255,255,255,0.2); background: rgba(255,255,255,0.2); }
+      .case-card.selected { background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.2)); border-color: #f59e0b; box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); transform: scale(1.05); z-index: 10; }
+      .case-card.opened { opacity: 0.4; cursor: not-allowed; background: rgba(0,0,0,0.4); transform: scale(0.95); border-color: rgba(255,255,255,0.05); }
+      
+      .case-number { font-size: 2.8em; font-weight: 900; margin-bottom: 10px; color: rgba(255,255,255,0.95); text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+      .koper-icon { font-size: 2em; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+      .your-case-label { position: absolute; top: -12px; background: #f59e0b; color: #fff; padding: 4px 10px; font-size: 0.7em; font-weight: 800; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px; }
+      
+      .player-info { text-align: center; animation: popIn 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; padding: 10px; }
+      .player-name { font-size: 1.2em; font-weight: 800; color: #fff; word-wrap: break-word; }
+      .player-orig-role { font-size: 0.8em; opacity: 0.7; margin-top: 4px; text-transform: uppercase; }
+
+      .interaction-panel { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.15); padding: 40px 30px; margin: 30px auto; max-width: 800px; text-align: center; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation: popIn 0.5s ease; }
+      .interaction-panel h2 { font-size: 2em; margin-bottom: 15px; font-weight: 800; color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
+      
+      .hero-showcase { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 30px; margin: 25px auto; border-radius: 16px; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+      .hero-showcase .hero-name { font-size: 2.2em; font-weight: 800; margin-bottom: 8px; color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
+      .hero-showcase .hero-stats { font-size: 1.1em; color: #cbd5e1; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+      .btn { padding: 16px 40px; font-size: 1.1em; font-weight: 800; border: none; cursor: pointer; transition: all 0.2s; border-radius: 12px; text-transform: uppercase; letter-spacing: 1px; color: white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+      .btn:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+      .btn:active { transform: translateY(0) scale(0.98); }
+      .btn-deal { background: #10b981; }
+      .btn-no-deal { background: #ef4444; }
+      .btn-switch { background: #3b82f6; }
+      .offer-buttons { display: flex; gap: 20px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
+
+      .players-section { background: rgba(0, 0, 0, 0.2); border-radius: 20px; padding: 30px; margin-top: 30px; border: 1px solid rgba(255,255,255,0.05); animation: fadeIn 0.8s ease; text-align: left; }
+      .players-section h3 { font-size: 1.2em; font-weight: 800; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+      .players-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+      
+      .player-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 15px; text-align: left; transition: all 0.3s ease; position: relative; overflow: hidden; }
+      .player-card .p-name { font-size: 1.1em; font-weight: 800; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+      .player-card .p-role { font-size: 0.85em; color: #cbd5e1; font-weight: 600; text-transform: uppercase; }
+      
+      .player-card.eliminated { opacity: 0.4; filter: grayscale(80%); border-color: rgba(239,68,68,0.3); }
+      .player-card.eliminated .p-name { text-decoration: line-through; }
+      .elim-badge { font-size: 0.8em; font-weight: 800; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; }
+
+      /* Final Result & Drag Drop */
+      .result-board { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px; margin: 40px auto; max-width: 1000px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); animation: popIn 0.8s ease; text-align: center; }
+      .final-roster-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 20px; }
+      .final-card { background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 20px; width: 160px; text-align: center; position: relative; cursor: grab; transition: all 0.2s ease; }
+      .final-card:active { cursor: grabbing; opacity: 0.8; transform: scale(1.05); }
+      .final-card.selected-swap { border-color: #38bdf8; box-shadow: 0 0 20px rgba(56,189,248,0.4); transform: scale(1.05); background: rgba(56,189,248,0.1); }
+      .final-card .f-role { font-size: 0.9em; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 6px; }
+      .final-card .f-name { font-size: 1.1em; font-weight: 800; color: #fff; margin-bottom: 5px; }
+
+      .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+      .dot.perfect { background-color: #10b981; box-shadow: 0 0 8px rgba(16,185,129,0.5); }
+      .dot.ok { background-color: #facc15; box-shadow: 0 0 8px rgba(250,204,21,0.5); }
+      .dot.bad { background-color: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.5); }
+
+      .legend-box { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 20px; text-align: center; display: inline-flex; flex-direction: column; gap: 8px; font-size: 0.9em; margin-bottom: 30px; }
+      .legend-item { display: flex; align-items: center; gap: 10px; color: #cbd5e1; }
+
+      .score-box { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; display: inline-block; min-width: 300px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
+      .rank-name { font-size: 3em; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
+
+      @media (max-width: 768px) {
+        .case-card { width: 110px; height: 140px; padding: 10px; }
+        .case-number { font-size: 2.2em; }
+        .koper-icon { font-size: 1.8em; }
+        .result-board { padding: 20px; }
+        .final-card { width: 140px; }
+        .btn { padding: 12px 24px; font-size: 1em; width: 100%; }
+        .interaction-panel { padding: 25px 15px; }
+        .hero-showcase .hero-name { font-size: 1.8em; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="aurora-bg"></div>
+    <div id="root" class="container"></div>
+
+    <script>
+      // Database Hero Terkonsolidasi (Tanpa Duplikat & Mendukung Multi-Role)
+      const MLBB_HEROES = [
+        { name: "Gloo", role: "Roam/EXP", tier: "SS" },
+        { name: "Sora", role: "EXP", tier: "SS" },
+        { name: "Sun", role: "Jungle/EXP", tier: "SS" },
+        { name: "Guinevere", role: "EXP", tier: "SS" },
+        { name: "Harley", role: "Jungle/Mid", tier: "SS" },
+        { name: "Suyou", role: "Jungle", tier: "SS" },
+        { name: "Marcel", role: "Roam", tier: "SS" },
+
+        { name: "Minsitthar", role: "Roam/EXP", tier: "S" },
+        { name: "Hilda", role: "Roam/EXP", tier: "S" },
+        { name: "Freya", role: "Jungle/EXP", tier: "S" },
+        { name: "Zhuxin", role: "Mid", tier: "S" },
+        { name: "Zetian", role: "Mid", tier: "S" },
+        { name: "Helcurt", role: "Jungle/Roam", tier: "S" },
+        { name: "Estes", role: "Roam", tier: "S" },
+        { name: "Leomord", role: "Jungle", tier: "S" },
+
+        { name: "Paquito", role: "EXP", tier: "A" },
+        { name: "Hanabi", role: "Gold", tier: "A" },
+        { name: "Gusion", role: "Jungle/Mid", tier: "A" },
+        { name: "Kadita", role: "Mid", tier: "A" },
+        { name: "Floryn", role: "Roam", tier: "A" },
+        { name: "Saber", role: "Jungle/Roam", tier: "A" },
+        { name: "Kaja", role: "Roam", tier: "A" },
+        { name: "Yi Sun-shin", role: "Jungle", tier: "A" },
+        { name: "Fredrinn", role: "Jungle", tier: "A" },
+
+        { name: "Alice", role: "EXP/Jungle", tier: "B" },
+        { name: "Phoveus", role: "EXP", tier: "B" },
+        { name: "Lesley", role: "Gold", tier: "B" },
+        { name: "Harith", role: "Gold/Jungle", tier: "B" },
+        { name: "Karrie", role: "Gold", tier: "B" },
+        { name: "Miya", role: "Gold", tier: "B" },
+        { name: "Gord", role: "Mid", tier: "B" },
+        { name: "Belerick", role: "Roam", tier: "B" },
+        { name: "Diggie", role: "Roam", tier: "B" },
+        { name: "Angela", role: "Roam", tier: "B" },
+        { name: "Tigreal", role: "Roam", tier: "B" },
+        { name: "Franco", role: "Roam", tier: "B" },
+        { name: "Aamon", role: "Jungle", tier: "B" },
+
+        { name: "Silvanna", role: "EXP", tier: "C" },
+        { name: "Julian", role: "Jungle/EXP", tier: "C" },
+        { name: "X.Borg", role: "EXP", tier: "C" },
+        { name: "Badang", role: "EXP/Roam", tier: "C" },
+        { name: "Masha", role: "EXP", tier: "C" },
+        { name: "Thamuz", role: "EXP", tier: "C" },
+        { name: "Yu Zhong", role: "EXP", tier: "C" },
+        { name: "Khaleed", role: "EXP/Roam", tier: "C" },
+        { name: "Chou", role: "Roam/EXP", tier: "C" },
+        { name: "Benedetta", role: "EXP", tier: "C" },
+        { name: "Terizla", role: "EXP", tier: "C" },
+        { name: "Uranus", role: "EXP", tier: "C" },
+        { name: "Lukas", role: "Jungle/EXP", tier: "C" },
+        { name: "Obsidia", role: "Gold", tier: "C" },
+        { name: "Beatrix", role: "Gold", tier: "C" },
+        { name: "Ixia", role: "Gold", tier: "C" },
+        { name: "Melissa", role: "Gold", tier: "C" },
+        { name: "Clint", role: "Gold", tier: "C" },
+        { name: "Moskov", role: "Gold", tier: "C" },
+        { name: "Claude", role: "Gold", tier: "C" },
+        { name: "Irithel", role: "Gold", tier: "C" },
+        { name: "Brody", role: "Gold", tier: "C" },
+        { name: "Valir", role: "Mid", tier: "C" },
+        { name: "Selena", role: "Roam/Mid", tier: "C" },
+        { name: "Vexana", role: "Mid", tier: "C" },
+        { name: "Nana", role: "Mid", tier: "C" },
+        { name: "Odette", role: "Mid", tier: "C" },
+        { name: "Kagura", role: "Mid", tier: "C" },
+        { name: "Eudora", role: "Mid", tier: "C" },
+        { name: "Novaria", role: "Mid", tier: "C" },
+        { name: "Cyclops", role: "Mid", tier: "C" },
+        { name: "Grock", role: "Roam", tier: "C" },
+        { name: "Minotaur", role: "Roam", tier: "C" },
+        { name: "Khufra", role: "Roam", tier: "C" },
+        { name: "Akai", role: "Roam", tier: "C" },
+        { name: "Atlas", role: "Roam", tier: "C" },
+        { name: "Natalia", role: "Roam/Jungle", tier: "C" },
+        { name: "Lolita", role: "Roam", tier: "C" },
+        { name: "Johnson", role: "Roam", tier: "C" },
+        { name: "Rafaela", role: "Roam", tier: "C" },
+        { name: "Baxia", role: "Jungle/Roam", tier: "C" },
+        { name: "Carmilla", role: "Roam", tier: "C" },
+        { name: "Hayabusa", role: "Jungle", tier: "C" },
+        { name: "Hanzo", role: "Jungle", tier: "C" },
+        { name: "Aulus", role: "Jungle", tier: "C" },
+        { name: "Fanny", role: "Jungle", tier: "C" },
+
+        { name: "Ruby", role: "EXP", tier: "D" },
+        { name: "Yin", role: "Jungle/EXP", tier: "D" },
+        { name: "Bane", role: "Jungle/EXP", tier: "D" },
+        { name: "Arlott", role: "EXP", tier: "D" },
+        { name: "Aldous", role: "EXP", tier: "D" },
+        { name: "Edith", role: "Roam/EXP", tier: "D" },
+        { name: "Dyrroth", role: "Jungle/EXP", tier: "D" },
+        { name: "Lapu-Lapu", role: "EXP", tier: "D" },
+        { name: "Cici", role: "EXP", tier: "D" },
+        { name: "Martis", role: "Jungle/EXP", tier: "D" },
+        { name: "Jawhead", role: "Roam/EXP", tier: "D" },
+        { name: "Zilong", role: "EXP", tier: "D" },
+        { name: "Gatotkaca", role: "Roam/EXP", tier: "D" },
+        { name: "Alpha", role: "Jungle/EXP", tier: "D" },
+        { name: "Esmeralda", role: "EXP", tier: "D" },
+        { name: "Balmond", role: "Jungle/EXP", tier: "D" },
+        { name: "Popol & Kupa", role: "Gold/Jungle", tier: "D" },
+        { name: "Natan", role: "Gold", tier: "D" },
+        { name: "Granger", role: "Gold", tier: "D" },
+        { name: "Layla", role: "Gold", tier: "D" },
+        { name: "Kimmy", role: "Gold/Mid", tier: "D" },
+        { name: "Wanwan", role: "Gold", tier: "D" },
+        { name: "Bruno", role: "Gold", tier: "D" },
+        { name: "Zhask", role: "Mid", tier: "D" },
+        { name: "Faramis", role: "Roam/Mid", tier: "D" },
+        { name: "Yve", role: "Mid", tier: "D" },
+        { name: "Lylia", role: "Mid", tier: "D" },
+        { name: "Vale", role: "Mid", tier: "D" },
+        { name: "Cecilion", role: "Mid", tier: "D" },
+        { name: "Chang'e", role: "Mid", tier: "D" },
+        { name: "Lunox", role: "Mid", tier: "D" },
+        { name: "Xavier", role: "Mid", tier: "D" },
+        { name: "Pharsa", role: "Mid", tier: "D" },
+        { name: "Aurora", role: "Mid", tier: "D" },
+        { name: "Luo Yi", role: "Mid", tier: "D" },
+        { name: "Valentina", role: "Mid", tier: "D" },
+        { name: "Kalea", role: "Roam", tier: "D" },
+        { name: "Chip", role: "Roam", tier: "D" },
+        { name: "Hylos", role: "Roam", tier: "D" },
+        { name: "Mathilda", role: "Roam", tier: "D" },
+        { name: "Alucard", role: "Jungle", tier: "D" },
+        { name: "Joy", role: "Jungle", tier: "D" },
+        { name: "Karina", role: "Jungle", tier: "D" },
+        { name: "Barats", role: "Jungle", tier: "D" },
+        { name: "Nolan", role: "Jungle", tier: "D" },
+        { name: "Roger", role: "Jungle", tier: "D" },
+        { name: "Lancelot", role: "Jungle", tier: "D" },
+        { name: "Ling", role: "Jungle", tier: "D" }
+      ];
+
+      const ROLE_ORDER = ['EXP', 'Jungle', 'Mid', 'Gold', 'Roam'];
+      let currentRound = 1;
+      let myDraft = [];
+      let finalRoster = { 'EXP': null, 'Jungle': null, 'Mid': null, 'Gold': null, 'Roam': null };
+      let finalRosterInitialized = false;
+      
+      let cases = [];
+      let openedCases = [];
+      let selectedCase = null;
+      let bankerOffer = null;
+      let roundHeroFinal = null;
+      
+      let roundHeroNames = []; 
+      let latestEliminatedBatch = []; 
+      
+      // Global Tracking Mencegah Duplikasi
+      // Hanya akan diisi oleh hero yang di-DRAFT secara final oleh pemain.
+      let usedGlobalHeroes = []; 
+
+      let gameState = 'pick-own'; 
+
+      // Drag & Drop State
+      let draggedSlot = null;
+      let selectedSlotForSwap = null;
+
+      function getScore(tier) {
+        const scores = { 'SS': 100, 'S': 90, 'A': 80, 'B': 70, 'C': 60, 'D': 50 };
+        return scores[tier] || 50;
+      }
+
+      function getMedalGroup(tier) {
+        if (tier === 'SS' || tier === 'S') return 'GOLD';
+        if (tier === 'A' || tier === 'B') return 'SILVER';
+        if (tier === 'C' || tier === 'D') return 'BRONZE';
+        return 'BRONZE';
+      }
+
+      function getMedal(tier) {
+        if (tier === 'SS' || tier === 'S') return '🥇';
+        if (tier === 'A' || tier === 'B') return '🥈';
+        if (tier === 'C' || tier === 'D') return '🥉';
+        return '';
+      }
+
+      function getTierSortValue(tier) {
+        const vals = { 'SS': 6, 'S': 5, 'A': 4, 'B': 3, 'C': 2, 'D': 1 };
+        return vals[tier] || 0;
+      }
+
+      function getCompatibility(heroRole, slotRole) {
+        // Logika warna untuk hero yang punya peran ganda (misal: "Roam/EXP")
+        const roles = heroRole.split('/').map(r => r.trim());
+        if (roles[0] === slotRole) return 'perfect'; // Jika ditempatkan di role utama (Hijau)
+        if (roles.length > 1 && roles[1] === slotRole) return 'ok'; // Jika di role kedua (Kuning)
+        return 'bad'; // Jika ditempatkan di luar rolenya (Merah)
+      }
+
+      function getCompColor(comp) {
+        if (comp === 'perfect') return '#10b981';
+        if (comp === 'ok') return '#facc15';
+        return '#ef4444';
+      }
+
+      function shuffleArray(array) { return [...array].sort(() => Math.random() - 0.5); }
+
+      function startRound() {
+        if (currentRound > 5) {
+            if (!finalRosterInitialized) {
+                finalRoster['EXP'] = myDraft[0];
+                finalRoster['Jungle'] = myDraft[1];
+                finalRoster['Mid'] = myDraft[2];
+                finalRoster['Gold'] = myDraft[3];
+                finalRoster['Roam'] = myDraft[4];
+                finalRosterInitialized = true;
+            }
+            gameState = 'final-result'; 
+            render(); 
+            return;
+        }
+
+        // Filter hero yang sudah masuk ke draft permanen
+        let freshHeroes = MLBB_HEROES.filter(h => !usedGlobalHeroes.includes(h.name));
+        
+        let poolGold = shuffleArray(freshHeroes.filter(h => ['SS', 'S'].includes(h.tier)));
+        let poolSilver = shuffleArray(freshHeroes.filter(h => ['A', 'B'].includes(h.tier)));
+        let poolBronze = shuffleArray(freshHeroes.filter(h => ['C', 'D'].includes(h.tier)));
+        
+        let targetHeroes = [];
+        // Memastikan kemunculan hero SS/S (Gold) lebih stabil
+        targetHeroes.push(...poolGold.splice(0, Math.min(3, poolGold.length)));
+        targetHeroes.push(...poolSilver.splice(0, Math.min(3, poolSilver.length)));
+        targetHeroes.push(...poolBronze.splice(0, Math.min(4, poolBronze.length)));
+        
+        // Memastikan koper genap 10 jika ada yang kurang
+        while (targetHeroes.length < 10) {
+            let fallbackPool = shuffleArray(freshHeroes.filter(h => !targetHeroes.some(th => th.name === h.name)));
+            if(fallbackPool.length === 0) break;
+            targetHeroes.push(fallbackPool.pop());
+        }
+        
+        const roundHeroes = shuffleArray(targetHeroes);
+        roundHeroNames = roundHeroes.map(h => h.name); 
+
+        cases = roundHeroes.map((hero, idx) => ({ id: idx + 1, player: hero, isOpened: false }));
+        
+        openedCases = []; selectedCase = null; bankerOffer = null; roundHeroFinal = null; latestEliminatedBatch = [];
+        gameState = 'pick-own';
+        render();
+      }
+
+      function handleCaseClick(caseId) {
+        if (gameState === 'pick-own') {
+          selectedCase = caseId; gameState = 'opening-3-1'; render(); return;
+        }
+
+        if (['opening-3-1', 'opening-3-2', 'opening-1-1', 'opening-1-2'].includes(gameState) && caseId !== selectedCase && !openedCases.includes(caseId)) {
+          openedCases.push(caseId);
+          const eliminatedPlayer = cases.find(c => c.id === caseId).player;
+          latestEliminatedBatch.push(eliminatedPlayer); 
+
+          if (gameState === 'opening-3-1' && openedCases.length === 3) { generateBankerOffer(1); gameState = 'banker-offer-1'; } 
+          else if (gameState === 'opening-3-2' && openedCases.length === 6) { generateBankerOffer(2); gameState = 'banker-offer-2'; } 
+          else if (gameState === 'opening-1-1' && openedCases.length === 7) { generateBankerOffer(3); gameState = 'banker-offer-3'; } 
+          else if (gameState === 'opening-1-2' && openedCases.length === 8) { gameState = 'switch-decision'; }
+          render();
+        }
+      }
+
+      function generateBankerOffer(offerNumber) {
+        // Tentukan medali koper utama
+        const myCase = cases.find(c => c.id === selectedCase);
+        const myCaseMedalGroup = getMedalGroup(myCase.player.tier);
+        
+        let targetGroup = 'BRONZE';
+
+        // LOGIKA PENAWARAN BANKER (GAMBLING)
+        if (myCaseMedalGroup === 'GOLD') {
+            if (offerNumber === 1) targetGroup = 'SILVER';
+            else if (offerNumber === 2) targetGroup = 'GOLD';
+            else if (offerNumber === 3) targetGroup = 'GOLD';
+        } else if (myCaseMedalGroup === 'SILVER') {
+            if (offerNumber === 1) targetGroup = 'BRONZE';
+            else if (offerNumber === 2) targetGroup = 'SILVER';
+            else if (offerNumber === 3) targetGroup = 'SILVER';
+        } else { // BRONZE
+            targetGroup = 'BRONZE';
+        }
+
+        let targetTiers = [];
+        if (targetGroup === 'GOLD') targetTiers = ['SS', 'S'];
+        else if (targetGroup === 'SILVER') targetTiers = ['A', 'B'];
+        else targetTiers = ['C', 'D'];
+
+        let freshHeroes = MLBB_HEROES.filter(h => !usedGlobalHeroes.includes(h.name));
+        
+        // Filter hero yang sesuai dengan target tier
+        let availableOffers = freshHeroes.filter(h => targetTiers.includes(h.tier) && !roundHeroNames.includes(h.name));
+        
+        // PENCEGAH KEGAGALAN: Jika di pool sisa koper (roundHeroNames) ada yang lebih baik/sesuai,
+        // tapi di pool freshHeroes sudah habis, maka Banker akan menawarkan apa yang masih benar-benar 
+        // masuk akal di sisa koper game ini.
+        if (availableOffers.length === 0) {
+             const remainingCases = cases.filter(c => !openedCases.includes(c.id));
+             
+             // Coba cari koper yang setara dengan targetGroup di sisa koper (selain punya kita)
+             let fallbackFromRemaining = remainingCases.filter(c => targetTiers.includes(c.player.tier) && c.id !== selectedCase);
+             
+             if (fallbackFromRemaining.length > 0) {
+                 availableOffers = fallbackFromRemaining.map(c => c.player);
+             } else {
+                 // Jika tidak ada sama sekali yang cocok, Banker offer hero acak dari sisa koper 
+                 // yang menduduki rank paling tinggi saat itu
+                 let highestRemaining = [...remainingCases].sort((a,b) => getTierSortValue(b.player.tier) - getTierSortValue(a.player.tier));
+                 availableOffers = [highestRemaining[0].player];
+             }
+        }
+        
+        bankerOffer = shuffleArray(availableOffers)[0];
+      }
+
+      function acceptDeal() { roundHeroFinal = bankerOffer; finishRound(); }
+      
+      function rejectDeal() {
+        latestEliminatedBatch = []; 
+        if (gameState === 'banker-offer-1') gameState = 'opening-3-2';
+        else if (gameState === 'banker-offer-2') gameState = 'opening-1-1';
+        else if (gameState === 'banker-offer-3') gameState = 'opening-1-2';
+        render();
+      }
+
+      function switchCase() {
+        const otherCase = cases.find(c => c.id !== selectedCase && !openedCases.includes(c.id));
+        roundHeroFinal = otherCase.player; finishRound();
+      }
+
+      function keepCase() {
+        const myCase = cases.find(c => c.id === selectedCase);
+        roundHeroFinal = myCase.player; finishRound();
+      }
+
+      function finishRound() {
+        myDraft.push(roundHeroFinal);
+        
+        // Kunci hero ini dari global pool (Tidak akan pernah muncul lagi di ronde berikutnya)
+        usedGlobalHeroes.push(roundHeroFinal.name); 
+        
+        gameState = 'round-result';
+        render();
+      }
+
+      function nextRound() { currentRound++; startRound(); }
+
+      function handleDragStart(slot) { draggedSlot = slot; }
+      function handleDragOver(e) { e.preventDefault(); }
+      function handleDrop(e, targetSlot) {
+        e.preventDefault();
+        if (draggedSlot && draggedSlot !== targetSlot) {
+            const temp = finalRoster[draggedSlot];
+            finalRoster[draggedSlot] = finalRoster[targetSlot];
+            finalRoster[targetSlot] = temp;
+            render();
+        }
+        draggedSlot = null;
+      }
+      function handleSlotTap(slot) {
+        if (!selectedSlotForSwap) {
+            selectedSlotForSwap = slot;
+        } else if (selectedSlotForSwap === slot) {
+            selectedSlotForSwap = null;
+        } else {
+            const temp = finalRoster[selectedSlotForSwap];
+            finalRoster[selectedSlotForSwap] = finalRoster[slot];
+            finalRoster[slot] = temp;
+            selectedSlotForSwap = null;
+        }
+        render();
+      }
+
+      function renderAllHeroesSection() {
+        const sortedCases = [...cases].sort((a,b) => {
+            let tA = getTierSortValue(a.player.tier);
+            let tB = getTierSortValue(b.player.tier);
+            if(tB !== tA) return tB - tA;
+            return a.player.name.localeCompare(b.player.name);
+        });
+
+        let html = `
+        <div class="players-section">
+            <h3>📋 All Players in This Game</h3>
+            <div class="players-grid">
+        `;
+        
+        sortedCases.forEach(c => {
+            const isElim = openedCases.includes(c.id);
+            const isDrafted = (gameState === 'round-result' && c.player.name === roundHeroFinal.name);
+            const isOriginal = (c.id === selectedCase);
+            
+            let cardClass = isElim && !isDrafted ? 'eliminated' : '';
+            let extraStyle = '';
+            
+            if (isDrafted) {
+                extraStyle = 'border-color:#10b981; background:rgba(16,185,129,0.15); box-shadow:0 0 15px rgba(16,185,129,0.2);';
+            }
+
+            html += `
+            <div class="player-card ${cardClass}" style="${extraStyle}">
+                <div class="p-name">${getMedal(c.player.tier)} ${c.player.name}</div>
+                <div class="p-role">${c.player.role}</div>
+                ${isElim && !isDrafted ? '<div class="elim-badge" style="color:#ef4444;">❌ ELIMINATED</div>' : ''}
+                ${isDrafted ? '<div class="elim-badge" style="color:#10b981; border-top-color:rgba(16,185,129,0.2);">✨ DRAFTED</div>' : ''}
+                ${isOriginal && !isDrafted && gameState === 'round-result' ? '<div class="elim-badge" style="color:#f59e0b; border-top-color:rgba(245,158,11,0.2);">🎁 ORIGINAL CASE</div>' : ''}
+            </div>
+            `;
+        });
+        
+        html += `</div></div>`;
+        return html;
+      }
+
+      function render() {
+        const root = document.getElementById('root');
+        let html = '';
+
+        if (gameState !== 'final-result') {
+          html += `
+            <div class="header">
+              <div class="title">MLBB DRAFT CHALLENGE</div>
+              <button class="btn-reset" onclick="location.reload()">Restart Game</button>
+            </div>
+            
+            <div class="round-indicator">
+              <div class="round-badge">ROUND ${currentRound}</div>
+            </div>
+
+            <div class="draft-progress">
+              ${[0,1,2,3,4].map((idx) => `
+                <div class="draft-slot ${idx === currentRound - 1 ? 'active' : ''} ${myDraft[idx] ? 'filled' : ''}">
+                  <div class="slot-role">SLOT ${idx + 1}</div>
+                  <div class="slot-hero">${myDraft[idx] ? `${getMedal(myDraft[idx].tier)} ${myDraft[idx].name}` : '???'}</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+
+        if (gameState === 'pick-own') {
+          html += `<div class="instruction">🎁 Pilih 1 koper utama untuk di-draft!</div>`;
+        } else if (gameState === 'opening-3-1') {
+          html += `<div class="instruction">🗑️ Buka ${3 - openedCases.length} koper lagi untuk mengeliminasi hero.</div>`;
+        } else if (gameState === 'opening-3-2') {
+          html += `<div class="instruction">🗑️ Banker ditolak! Buka ${6 - openedCases.length} koper lagi.</div>`;
+        } else if (gameState === 'opening-1-1') {
+          html += `<div class="instruction">🗑️ Banker ditolak! Buka 1 koper lagi.</div>`;
+        } else if (gameState === 'opening-1-2') {
+          html += `<div class="instruction">🗑️ Banker ditolak! Buka 1 koper terakhir.</div>`;
+        }
+
+        if (['pick-own', 'opening-3-1', 'opening-3-2', 'opening-1-1', 'opening-1-2'].includes(gameState)) {
+          html += `<div class="cases-grid">`;
+          cases.forEach(c => {
+            const isSelected = c.id === selectedCase;
+            const isOpened = openedCases.includes(c.id);
+            const clickable = (gameState === 'pick-own') || (!isSelected && !isOpened);
+
+            html += `
+              <div class="case-card ${isSelected ? 'selected' : ''} ${isOpened ? 'opened' : ''}" onclick="${clickable ? `handleCaseClick(${c.id})` : ''}">
+                ${isSelected ? '<div class="your-case-label">Koper Kamu</div>' : ''}
+                ${isOpened ? `
+                  <div class="player-info">
+                    <div class="player-name">${getMedal(c.player.tier)}<br>${c.player.name}</div>
+                    <div class="player-orig-role">${c.player.role}</div>
+                  </div>
+                ` : `
+                  <div class="case-number">${c.id}</div>
+                  <div class="koper-icon">💼</div>
+                `}
+              </div>
+            `;
+          });
+          html += `</div>`;
+          
+          if(gameState !== 'pick-own') {
+             html += renderAllHeroesSection();
+          }
+        }
+
+        if (gameState.startsWith('banker-offer-')) {
+          html += `
+            <div class="interaction-panel">
+              <h2>📞 THE BANKER'S OFFER!</h2>
+              <p style="font-size: 1.1em; color: #cbd5e1; margin-bottom: 10px;">The Banker wants to make a deal!</p>
+              
+              <div class="hero-showcase">
+                <div class="hero-name">${getMedal(bankerOffer.tier)} ${bankerOffer.name}</div>
+                <div class="hero-stats">${bankerOffer.role} Role</div>
+              </div>
+
+              <div style="font-size: 0.9em; color: #cbd5e1; margin-top: 15px; margin-bottom: 25px;">
+                (Kamu baru saja menyingkirkan ${latestEliminatedBatch.map(h => h.name).join(', ')})
+              </div>
+
+              <div class="offer-buttons">
+                <button class="btn btn-deal" onclick="acceptDeal()">☑️ DEAL!</button>
+                <button class="btn btn-no-deal" onclick="rejectDeal()">❌ NO DEAL!</button>
+              </div>
+            </div>
+            
+            <div class="cases-grid" style="opacity: 0.7; pointer-events: none; transform: scale(0.9);">
+          `;
+          cases.forEach(c => {
+             html += `
+              <div class="case-card ${c.id === selectedCase ? 'selected' : ''} ${openedCases.includes(c.id) ? 'opened' : ''}">
+                ${c.id === selectedCase ? '<div class="your-case-label">Koper Kamu</div>' : ''}
+                ${openedCases.includes(c.id) ? `
+                  <div class="player-info">
+                    <div class="player-name">${getMedal(c.player.tier)}<br>${c.player.name}</div>
+                    <div class="player-orig-role">${c.player.role}</div>
+                  </div>
+                ` : `<div class="case-number">${c.id}</div><div class="koper-icon">💼</div>`}
+              </div>`;
+          });
+          html += `</div>`;
+          html += renderAllHeroesSection();
+        }
+
+        if (gameState === 'switch-decision') {
+          const myCase = cases.find(c => c.id === selectedCase);
+          const otherCase = cases.find(c => c.id !== selectedCase && !openedCases.includes(c.id));
+          html += `
+            <div class="interaction-panel">
+              <h2 style="color: #ef4444; background: none; -webkit-text-fill-color: #ef4444;">🟥 FINAL DECISION</h2>
+              <p style="font-size: 1.1em; color: #cbd5e1; margin-bottom: 20px;">Hanya tersisa 2 koper!</p>
+              
+              <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 30px;">
+                <div class="case-card selected" style="cursor: default;"><div class="your-case-label">Koper Kamu</div><div class="case-number">${myCase.id}</div><div class="koper-icon">💼</div></div>
+                <div class="case-card" style="cursor: default; border-color: #3b82f6;"><div class="your-case-label" style="background: #3b82f6;">Koper Lain</div><div class="case-number">${otherCase.id}</div><div class="koper-icon">💼</div></div>
+              </div>
+
+              <div class="offer-buttons">
+                <button class="btn btn-switch" onclick="switchCase()">🔄 TUKAR KOPER LAIN</button>
+                <button class="btn btn-deal" onclick="keepCase()">✅ TETAP KOPER SAYA</button>
+              </div>
+            </div>
+            
+            ${renderAllHeroesSection()}
+          `;
+        }
+
+        if (gameState === 'round-result') {
+          html += `
+            <div class="interaction-panel">
+              <h2>✨ HERO DIDAPATKAN! ✨</h2>
+              <p style="font-size: 1.1em; color: #cbd5e1;">Slot ke-${currentRound} berhasil diisi oleh:</p>
+              
+              <div class="hero-showcase">
+                <div class="hero-name">${getMedal(roundHeroFinal.tier)} ${roundHeroFinal.name}</div>
+                <div class="hero-stats">${roundHeroFinal.role} Role</div>
+              </div>
+              
+              <button class="btn btn-deal" onclick="nextRound()" style="margin-top: 30px; width: 100%; max-width: 350px;">
+                ${currentRound === 5 ? 'TENTUKAN POSISI DRAFT 📊' : 'LANJUT RONDE BERIKUTNYA ➡️'}
+              </button>
+            </div>
+            
+            ${renderAllHeroesSection()}
+          `;
+        }
+
+        if (gameState === 'final-result') {
+          let baseScore = 0;
+          let penaltyPercent = 0;
+
+          ROLE_ORDER.forEach(role => {
+            const hero = finalRoster[role];
+            baseScore += getScore(hero.tier);
+            const comp = getCompatibility(hero.role, role);
+            if (comp === 'ok') penaltyPercent += 1.5;
+            else if (comp === 'bad') penaltyPercent += 3.0;
+          });
+
+          let penaltyAmount = baseScore * (penaltyPercent / 100);
+          let finalScore = Math.round(baseScore - penaltyAmount);
+          let percentage = ((finalScore / 500) * 100).toFixed(1);
+
+          html += `
+            <div class="result-board">
+              <div class="rank-box">
+                <div class="rank-label">FINAL DRAFT RATING</div>
+                <div class="rank-name" style="color: #10b981; text-shadow: 0 0 20px rgba(16,185,129,0.5); font-size: 4em; margin-bottom: 25px;">${percentage}%</div>
+              </div>
+
+              <div style="font-size: 1.1em; color: #cbd5e1; margin-bottom: 25px;">
+                Base Score: ${baseScore} Pt / 500 Pt<br>
+                Position Penalty: -${penaltyPercent}% (-${Math.round(penaltyAmount)} Pt)<br>
+                <span style="font-weight: 900; color: #f59e0b; font-size: 1.5em; display: inline-block; margin-top: 10px;">Final Score: ${finalScore} Pt</span>
+              </div>
+
+              <div style="margin-top: 50px;">
+                <h3 style="font-size: 1.5em; font-weight: 800; color: #fff; margin-bottom: 10px; text-transform: uppercase;">⭐ Your Final Draft</h3>
+                <div style="font-size: 0.9em; opacity: 0.8; margin-bottom: 25px;">💡 Tap heroes to swap positions • Drag & drop on desktop</div>
+                
+                <div class="final-roster-grid">
+                  ${ROLE_ORDER.map(role => {
+                    const hero = finalRoster[role];
+                    const comp = getCompatibility(hero.role, role);
+                    const dotColor = getCompColor(comp);
+                    const isSelected = selectedSlotForSwap === role;
+                    
+                    return `
+                    <div class="final-card ${isSelected ? 'selected-swap' : ''}" 
+                         draggable="true" 
+                         ondragstart="handleDragStart('${role}')"
+                         ondragover="handleDragOver(event)"
+                         ondrop="handleDrop(event, '${role}')"
+                         onclick="handleSlotTap('${role}')">
+                      <div class="f-role">${role} <span class="dot" style="background-color:${dotColor}; box-shadow:0 0 8px ${dotColor}88;"></span></div>
+                      <div class="f-name">${getMedal(hero.tier)}<br>${hero.name}</div>
+                      <div style="font-size: 0.8em; opacity: 0.7; margin-top: 5px;">${hero.role}</div>
+                    </div>
+                  `}).join('')}
+                </div>
+                
+                <div class="legend-box">
+                    <div class="legend-item"><span class="dot perfect"></span> Green = Perfect position fit (0% penalty)</div>
+                    <div class="legend-item"><span class="dot ok"></span> Yellow = Slightly off position (-1.5% penalty)</div>
+                    <div class="legend-item"><span class="dot bad"></span> Red = Way off position (-3% penalty)</div>
+                </div>
+              </div>
+
+              <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-switch" onclick="location.reload()" style="font-size: 1.2em; padding: 15px 50px;">🔄 MAIN LAGI</button>
+              </div>
+            </div>
+          `;
+        }
+
+        root.innerHTML = html;
+      }
+
+      startRound();
+    </script>
+  </body>
+</html>
